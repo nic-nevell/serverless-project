@@ -7,19 +7,57 @@
     <title>Jamstack Explorers - Up and Running with Serverless Functions</title>
   </head>
   <body>
+    <!-- <style>body {background-color: lightblue;}</style> -->
     <h1>Up and Running with Serverless Functions</h1>
     <button id="fetch-btn">Fetch</button>
     <p id="response-output">Response Placeholder</p>
+    
+    <button id="fetch-pokedex-btn">Fetch Pokedex</button>
+<script>
+	(function(d,t) {
+		var BASE_URL="https://app.chatwoot.com";
+		var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+		g.src=BASE_URL+"/packs/js/sdk.js";
+		g.defer = true;
+		g.async = true;
+		s.parentNode.insertBefore(g,s);
+		g.onload=function(){
+			window.chatwootSDK.run({
+				websiteToken: 'vnMXVJguzy2UggrQYHy26QZv',
+				baseUrl: BASE_URL
+			})
+		}
+	})(document,"script");
+</script>
+
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const fetchBtn = document.getElementById('fetch-btn')
         const responseText = document.getElementById('response-output')
+        const fetchPokedexBtn = document.getElementById('fetch-pokedex-btn')
 
-        fetchBtn.addEventListener('click', () => {
-          responseText.innerText = 'Static Text Replacement'
+        fetchPokedexBtn.addEventListener('click', async () => {
+          try {
+            const response = await fetch('/.netlify/functions/pokedex');
+            const data = await response.json();
+            responseText.innerText = JSON.stringify(data);
+          } catch (error) {
+            console.error(error);
+          }
+        });
+
+        fetchBtn.addEventListener('click', async () => {
+          const response = await fetch('/.netlify/functions/hello-world').then(
+            response => response.json()
+          )
+          responseText.innerText = JSON.stringify(response)
         })
       })
+      // const script = document.createElement('script')
+      // script.innerText = 'alert("hacked")'
+      // document.body.append(script)
+
     </script>
   </body>
 </html>
